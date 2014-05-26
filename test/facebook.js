@@ -96,10 +96,12 @@ Lab.experiment("Making sure that the passport-facebook works as expected", funct
         errorMock.assert();
         done();
     });
+});
 
-    test("instance.authorizationParams", function (done) {
+Lab.experiment("authorizationParams", function () {
+    test("normal patterns", function (done) {
         // Please see also https://developers.facebook.com/docs/reference/dialogs/oauth/
-        var i, length, options,
+        var options,
             displayList = ['page', 'popup', 'iframe', 'async', 'touch'],
             authTypeList = ['https', 'reauthenticate'],
             params,
