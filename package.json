@@ -1,0 +1,29 @@
+{
+  "name": "hapi-passport",
+  "version": "0.0.1",
+  "description": "Passport Strategy connector to hapi",
+  "main": "index.js",
+  "scripts": {
+    "test": "lab -t "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ikkyotech/hapi-passport.git"
+  },
+  "keywords": [
+    "hapi",
+    "passport",
+    "authentication"
+  ],
+  "author": "Martin Heidegger <mh@ikkyotech.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ikkyotech/hapi-passport/issues"
+  },
+  "homepage": "https://github.com/ikkyotech/hapi-passport",
+  "devDependencies": {
+    "lab": "~3.2.1",
+    "hapi": "~5.1.0",
+    "passport-facebook": "~1.0.3"
+  }
+}
