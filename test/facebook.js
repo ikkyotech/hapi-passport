@@ -1,15 +1,15 @@
 "use strict";
 
-var facebook = require("passport-facebook"),
+var Facebook = require("passport-facebook"),
     Lab = require("Lab"),
     test = Lab.test,
     nodemock = require("nodemock"),
     expect = Lab.expect;
 
 Lab.experiment("Making sure that the passport-facebook works as expected", function () {
-    test("regular auth?", function (done) {
+    test("simplest request", function (done) {
         var redirectMock = nodemock.mock("redirect").takes("https://www.facebook.com/dialog/oauth?response_type=code&redirect_uri=&client_id=myClientId"),
-            facebookImpl = new facebook({
+            facebookImpl = new Facebook({
                 clientID: "myClientId",
                 clientSecret: "myClientSecret"
             }, "http://callback");
