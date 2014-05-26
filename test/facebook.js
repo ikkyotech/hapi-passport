@@ -59,7 +59,7 @@ Lab.experiment("Making sure that the passport-facebook works as expected", funct
         done();
     });
 
-    test("Authorization Error", function (done) {
+    test("With a other error", function (done) {
         var AuthorizationError = require('passport-oauth2/lib/errors/authorizationerror'),
             errorToken = (Math.random() * 100 | 0).toString(),
             errorUri = 'http://error.uri' + errorToken,
@@ -82,6 +82,8 @@ Lab.experiment("Making sure that the passport-facebook works as expected", funct
             }, "http://callback");
 
         facebookImpl.error = errorMock.error;
+
+        // Please see also http://tools.ietf.org/html/draft-ietf-oauth-v2-30#page-26
         // facebookImpl.authenticate({ query: { error: 'access_denied' } }, {});
         facebookImpl.authenticate({ query: { error: 'invalid_scope', error_description:errorDescription, error_uri:errorUri } }, {});
         facebookImpl.authenticate({ query: { error: 'invalid_request', error_description:errorDescription, error_uri:errorUri } }, {});
@@ -90,7 +92,35 @@ Lab.experiment("Making sure that the passport-facebook works as expected", funct
         facebookImpl.authenticate({ query: { error: 'unsupported_response_type', error_description:errorDescription, error_uri:errorUri } }, {});
         facebookImpl.authenticate({ query: { error: 'temporarily_unavailable', error_description:errorDescription, error_uri:errorUri } }, {});
         facebookImpl.authenticate({ query: { error: 'server_error', error_description:errorDescription, error_uri:errorUri } }, {});
+        
         errorMock.assert();
+        done();
+    });
+
+    test("instance.authorizationParams", function (done) {
+        // Please see also https://developers.facebook.com/docs/reference/dialogs/oauth/
+        var i, length, options,
+            displayList = ['page', 'popup', 'iframe', 'async', 'touch'],
+            authTypeList = ['https', 'reauthenticate'],
+            params,
+            errorToken = (Math.random() * 100 | 0).toString(),
+            facebookImpl = new Facebook({
+                clientID: "myClientId",
+                clientSecret: "myClientSecret"
+            }, "http://callback");
+        displayList.forEach(function (display) {
+            authTypeList.forEach(function (authType) {
+                options = {
+                    display: display,
+                    authType: authType,
+                    authNonce: (Math.random() * 1000 | 0).toString()
+                }
+                params = facebookImpl.authorizationParams(options);
+                expect(params.display).to.equal(options.display);
+                expect(params.auth_type).to.equal(options.authType);
+                expect(params.auth_nonce).to.equal(options.authNonce);
+            });
+        });
         done();
     });
 });
