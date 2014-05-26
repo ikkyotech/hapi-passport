@@ -4,7 +4,7 @@
   "description": "Passport Strategy connector to hapi",
   "main": "index.js",
   "scripts": {
-    "test": "lab -t "
+    "test": "lab -r console -t -m 5000"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,8 @@
   "devDependencies": {
     "lab": "~3.2.1",
     "hapi": "~5.1.0",
-    "passport-facebook": "~1.0.3"
+    "passport-facebook": "~1.0.3",
+    "nodemock": "~0.3.4",
+    "lab-lint": "0.0.3"
   }
 }
