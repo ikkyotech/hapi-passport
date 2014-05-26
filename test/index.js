@@ -7,7 +7,7 @@ var hPass = require("../lib"),
     expect = Lab.expect;
 
 Lab.experiment("Make sure that all we implement all we know of passport", function () {
-    test("It should put redirect on the strategies object", function () {
+    test("It should put redirect on the strategies object", function (done) {
 
         var mockRedirect = function () { return undefined; },
             called = false,
@@ -18,5 +18,6 @@ Lab.experiment("Make sure that all we implement all we know of passport", functi
         };
         hPass(myClass)(null, {redirect: mockRedirect});
         expect(called).to.equal(true);
+        done();
     });
 });
