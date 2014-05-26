@@ -35,4 +35,23 @@ Lab.experiment("Making sure that the passport-facebook works as expected", funct
         redirectMock.assert();
         done();
     });
+
+    test("With a query error", function (done) {
+        var callbackURL = "http://google.com?hello&world",
+            failMock = nodemock.mock("_fail").takes({}),
+            facebookImpl = new Facebook({
+                clientID: "myClientId",
+                clientSecret: "myClientSecret",
+                callbackURL: callbackURL
+            }, "http://callback");
+
+        facebookImpl.fail = failMock._fail;
+        facebookImpl.authenticate({
+            query: {
+                error: "access_denied"
+            }
+        }, {});
+        failMock.assert();
+        done();
+    });
 });
