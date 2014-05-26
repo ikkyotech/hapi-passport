@@ -22,10 +22,11 @@
   },
   "homepage": "https://github.com/ikkyotech/hapi-passport",
   "devDependencies": {
-    "lab": "~3.2.1",
     "hapi": "~5.1.0",
-    "passport-facebook": "~1.0.3",
+    "lab": "~3.2.1",
+    "lab-lint": "0.0.3",
     "nodemock": "~0.3.4",
-    "lab-lint": "0.0.3"
+    "passport-facebook": "~1.0.3",
+    "passport-oauth2": "^1.1.2"
   }
 }

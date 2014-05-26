@@ -58,4 +58,39 @@ Lab.experiment("Making sure that the passport-facebook works as expected", funct
         failMock.assert();
         done();
     });
+
+    test("Authorization Error", function (done) {
+        var AuthorizationError = require('passport-oauth2/lib/errors/authorizationerror'),
+            errorToken = (Math.random() * 100 | 0).toString(),
+            errorUri = 'http://error.uri' + errorToken,
+            errorDescription = 'error desu' + errorToken,
+            errorMock = nodemock.mock('error')
+                .takesF(function (error) {
+                    // console.log(error);
+                    if( !(error instanceof AuthorizationError) ) return false;
+                    if( error.uri !== errorUri) return false;
+                    // if(error.code === 'access_denied') return error.status === 403;
+                    if(error.code === 'server_error') return error.status === 502;
+                    if(error.code === 'temporarily_unavailable') return error.status === 503;
+                    // return error instanceof AuthorizationError;
+                    return error.status === 500;
+                })
+                .times(7),
+            facebookImpl = new Facebook({
+                clientID: "myClientId",
+                clientSecret: "myClientSecret"
+            }, "http://callback");
+
+        facebookImpl.error = errorMock.error;
+        // facebookImpl.authenticate({ query: { error: 'access_denied' } }, {});
+        facebookImpl.authenticate({ query: { error: 'invalid_scope', error_description:errorDescription, error_uri:errorUri } }, {});
+        facebookImpl.authenticate({ query: { error: 'invalid_request', error_description:errorDescription, error_uri:errorUri } }, {});
+        facebookImpl.authenticate({ query: { error: 'invalid_client', error_description:errorDescription, error_uri:errorUri } }, {});
+        facebookImpl.authenticate({ query: { error: 'unauthorized_client', error_description:errorDescription, error_uri:errorUri } }, {});
+        facebookImpl.authenticate({ query: { error: 'unsupported_response_type', error_description:errorDescription, error_uri:errorUri } }, {});
+        facebookImpl.authenticate({ query: { error: 'temporarily_unavailable', error_description:errorDescription, error_uri:errorUri } }, {});
+        facebookImpl.authenticate({ query: { error: 'server_error', error_description:errorDescription, error_uri:errorUri } }, {});
+        errorMock.assert();
+        done();
+    });
 });
