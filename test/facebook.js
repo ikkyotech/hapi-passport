@@ -36,9 +36,12 @@ Lab.experiment("Making sure that the passport-facebook works as expected", funct
         done();
     });
 
-    test("With a query error", function (done) {
+    test("With a access denied error", function (done) {
         var callbackURL = "http://google.com?hello&world",
-            failMock = nodemock.mock("_fail").takes({}),
+            errorDescription = "Just some error message",
+            failMock = nodemock.mock("_fail").takesF(function (error) {
+                return error.message === errorDescription;
+            }),
             facebookImpl = new Facebook({
                 clientID: "myClientId",
                 clientSecret: "myClientSecret",
@@ -48,7 +51,8 @@ Lab.experiment("Making sure that the passport-facebook works as expected", funct
         facebookImpl.fail = failMock._fail;
         facebookImpl.authenticate({
             query: {
-                error: "access_denied"
+                error: "access_denied",
+                error_description: errorDescription
             }
         }, {});
         failMock.assert();
