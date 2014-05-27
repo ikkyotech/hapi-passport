@@ -1,8 +1,8 @@
 {
   "name": "hapi-passport",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Passport Strategy connector to hapi",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "lab -r console -t -m 5000"
   },
