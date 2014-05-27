@@ -17,7 +17,9 @@ hapi.routes({
             // Store the user
             // Add the user info the session
         },
-        onFailed: function (request, reply) {
+        onFailed: function (warning, request, reply) {
+        },
+        onError: function (error, request, reply) {
         }
     })
 });
