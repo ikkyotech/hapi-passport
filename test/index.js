@@ -1,7 +1,7 @@
 "use strict";
 
 var hPass = require("../lib"),
-    Lab = require("Lab"),
+    Lab = require("lab"),
     test = Lab.test,
     nodemock = require("nodemock"),
     expect = Lab.expect;
