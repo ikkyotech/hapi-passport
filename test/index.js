@@ -134,6 +134,31 @@ Lab.experiment("Make sure that all we implement all we know of passport", functi
         done();
     });
 
+    test("it should use a success redirect if given", function (done) {
+        var redirect = "http://test",
+            originalError = {message: "foo"},
+            called = "",
+            replyMethod = function (message, error) {
+                expect(message).to.equal("Login successful, redirecting...");
+                expect(error).to.equal(originalError);
+                called += "a";
+                return replyMethod;
+            };
+
+        replyMethod.redirect = function (uri) {
+            expect(uri).to.equal(redirect);
+            called += "b";
+        };
+
+        hp({
+            authenticate: function () {
+                this.success(originalError);
+            }
+        })({ successRedirect: redirect })(null, replyMethod);
+        expect(called).to.equal("ab");
+        done();
+    });
+
     test("it should just reply with a error when a error occurs", function (done) {
         var originalError = {message: "foo"},
             called = "",
@@ -164,6 +189,24 @@ Lab.experiment("Make sure that all we implement all we know of passport", functi
         hp({
             authenticate: function () {
                 this.fail(originalError);
+            }
+        })()(null, replyMethod);
+        expect(called).to.equal("a");
+        done();
+    });
+
+    test("it should just reply with the info message when the request was successful", function (done) {
+        var originalInfo = {message: "foo"},
+            called = "",
+            replyMethod = function (error) {
+                expect(error).to.equal(originalInfo);
+                called += "a";
+                return replyMethod;
+            };
+
+        hp({
+            authenticate: function () {
+                this.success(originalInfo);
             }
         })()(null, replyMethod);
         expect(called).to.equal("a");
