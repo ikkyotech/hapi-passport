@@ -6,6 +6,10 @@ var Facebook = require("passport-facebook"),
     nodemock = require("nodemock"),
     expect = Lab.expect;
 
+function dontCall() {
+    throw new Error("This shouldn't be called.");
+}
+
 Lab.experiment("Making sure that the passport-facebook works as expected", function () {
 
     test("simplest request", function (done) {
@@ -13,7 +17,7 @@ Lab.experiment("Making sure that the passport-facebook works as expected", funct
             facebookImpl = new Facebook({
                 clientID: "myClientId",
                 clientSecret: "myClientSecret"
-            }, "http://callback");
+            }, dontCall);
 
         facebookImpl.redirect = redirectMock.redirect;
         facebookImpl.authenticate({}, {});
@@ -28,7 +32,7 @@ Lab.experiment("Making sure that the passport-facebook works as expected", funct
                 clientID: "myClientId",
                 clientSecret: "myClientSecret",
                 callbackURL: callbackURL
-            }, "http://callback");
+            }, dontCall);
 
         facebookImpl.redirect = redirectMock.redirect;
         facebookImpl.authenticate({}, {});
@@ -46,7 +50,7 @@ Lab.experiment("Making sure that the passport-facebook works as expected", funct
                 clientID: "myClientId",
                 clientSecret: "myClientSecret",
                 callbackURL: callbackURL
-            }, "http://callback");
+            }, dontCall);
 
         facebookImpl.fail = failMock.failF;
         facebookImpl.authenticate({
@@ -88,7 +92,7 @@ Lab.experiment("Making sure that the passport-facebook works as expected", funct
             facebookImpl = new Facebook({
                 clientID: "myClientId",
                 clientSecret: "myClientSecret"
-            }, "http://callback");
+            }, dontCall);
 
         facebookImpl.error = errorMock.error;
         // facebookImpl.authenticate({ query: { error: 'access_denied' } }, {});
