@@ -107,6 +107,42 @@ Lab.experiment("Making sure that the passport-facebook works as expected", funct
         errorMock.assert();
         done();
     });
+
+    test("attempting a successful response", function (done) {
+        var code = "abcd",
+            accessToken = "accessToken1",
+            refreshToken = "refreshToken1",
+            infoInput = "some Input",
+            profile = { id: "id" },
+            oauthMock = nodemock.mock("getOAuthAccessToken").takesF(function (inCode, params, callback) {
+                expect(inCode).to.equal(code);
+                expect(params).to.eql({
+                    grant_type: 'authorization_code',
+                    redirect_uri: undefined
+                });
+                expect(typeof callback).to.equal("function");
+                callback(null, accessToken, refreshToken, params);
+                return true;
+            }).mock("get")
+                .takes("https://graph.facebook.com/me", accessToken, function () { return undefined; })
+                .calls(2, [null, JSON.stringify(profile)]),
+            oauth2 = '_oauth2',
+            facebookImpl = new Facebook({
+                clientID: "myClientId",
+                clientSecret: "myClientSecret"
+            }, function (passAccessToken, passRefreshToken, profile, verified) {
+                expect(passAccessToken).to.equal(accessToken);
+                expect(passRefreshToken).to.equal(refreshToken);
+                expect(profile).to.equal(profile);
+                verified(null, infoInput);
+            });
+        facebookImpl[oauth2] = oauthMock;
+        facebookImpl.success = function (info) {
+            expect(info).to.equal(infoInput);
+            done();
+        };
+        facebookImpl.authenticate({ session: {}, query: { code: code } });
+    });
 });
 
 Lab.experiment("authorizationParams", function () {
@@ -119,7 +155,7 @@ Lab.experiment("authorizationParams", function () {
             facebookImpl = new Facebook({
                 clientID: "myClientId",
                 clientSecret: "myClientSecret"
-            }, "http://callback");
+            }, dontCall);
         displayList.forEach(function (display) {
             authTypeList.forEach(function (authType) {
                 options = {
@@ -199,7 +235,7 @@ Lab.experiment("userProfile", function () {
                 clientSecret: "b78c7b021c42acb72242f1d7e354264a",
                 callbackURL: "http://localhost:8080/callback",
                 profileURL: profileURL
-            }, "http://callback");
+            }, dontCall);
 
         facebookImpl.redirect = function (authpath) {
             console.log(authpath);
