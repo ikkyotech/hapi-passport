@@ -1,6 +1,6 @@
 {
   "name": "hapi-passport",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Passport Strategy connector to hapi",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,6 @@
   },
   "homepage": "https://github.com/ikkyotech/hapi-passport",
   "devDependencies": {
-    "hapi": "~5.1.0",
     "lab": "~3.2.1",
     "lab-lint": "0.0.3",
     "nodemock": "~0.3.4",
