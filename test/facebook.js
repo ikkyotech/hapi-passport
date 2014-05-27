@@ -203,9 +203,6 @@ Lab.experiment("userProfile", function () {
 
         errorPatterns.forEach(function (error) {
             bodyPatterns.forEach(function (body, bIndex) {
-                // console.log('\n--------', 'error:', eIndex, 'body:', bIndex);
-                // console.log(error);
-                // console.log(body);
 
                 var mockOauth2 = nodemock.mock('get')
                     .takes(profileURL, accessToken, function () { return undefined; })
