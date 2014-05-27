@@ -4,39 +4,50 @@ var hp = require("../lib"),
     Lab = require("lab"),
     test = Lab.test,
     nodemock = require("nodemock"),
-    expect = Lab.expect;
+    expect = Lab.expect,
+    requestStub = {};
 
-Lab.experiment("Make sure that all we implement all we know of passport", function () {
+Lab.experiment("Make sure that the facebook login", function () {
 
-    test("It should just work without any option", function (done) {
+    test("should just work without any option", function (done) {
         hp({
             authenticate: function () { return undefined; }
-        })()(null, {});
+        })()(requestStub, {});
         done();
     });
 
-    test("It should pass down the authentication", function (done) {
+    test("should pass down the authentication", function (done) {
         var called = false;
         hp({
             authenticate: function () {
                 called = true;
             }
-        })({})(null, {});
+        })({})(requestStub, {});
         expect(called).to.equal(true);
         done();
     });
 
-    test("It should put redirect on the strategies object", function (done) {
-        var mockRedirect = function () { return undefined; };
+    test("should put redirect on the strategies object", function (done) {
+        var called = false,
+            url = "hello world",
+            responseMethod = function () {
+                return {
+                    redirect: function (resultUrl) {
+                        expect(resultUrl).to.equal(url);
+                        called = true;
+                    }
+                };
+            };
         hp({
             authenticate: function () {
-                expect(this.redirect).to.equal(mockRedirect);
+                this.redirect(url);
+                expect(called).to.equal(true);
             }
-        })({})(null, {redirect: mockRedirect});
+        })({})(requestStub, responseMethod);
         done();
     });
 
-    test("It should pass failure's to the failure option", function (done) {
+    test("should pass failure's to the failure option", function (done) {
         var called = false,
             mockFail = function (error) {
                 expect(error.message).to.equal("foo");
@@ -47,12 +58,12 @@ Lab.experiment("Make sure that all we implement all we know of passport", functi
             authenticate: function () {
                 this.fail({message: "foo"});
             }
-        })({ onFailed: mockFail })(null, {});
+        })({ onFailed: mockFail })(requestStub, {});
         expect(called).to.equal(true);
         done();
     });
 
-    test("It should pass error's to the error option", function (done) {
+    test("should pass error's to the error option", function (done) {
         var called = false,
             mockError = function mockError(error) {
                 expect(error.message).to.equal("foo");
@@ -63,12 +74,12 @@ Lab.experiment("Make sure that all we implement all we know of passport", functi
             authenticate: function () {
                 this.error({message: "foo"});
             }
-        })({ onError: mockError })(null, {});
+        })({ onError: mockError })(requestStub, {});
         expect(called).to.equal(true);
         done();
     });
 
-    test("It should pass error's to the error option", function (done) {
+    test("should pass error's to the error option", function (done) {
         var called = false,
             mockError = function mockError(error) {
                 expect(error.message).to.equal("foo");
@@ -79,12 +90,12 @@ Lab.experiment("Make sure that all we implement all we know of passport", functi
             authenticate: function () {
                 this.error({message: "foo"});
             }
-        })({ onError: mockError })(null, {});
+        })({ onError: mockError })(requestStub, {});
         expect(called).to.equal(true);
         done();
     });
 
-    test("it should use a error redirect if given", function (done) {
+    test("should use a error redirect if given", function (done) {
         var redirect = "http://test",
             originalError = {message: "foo"},
             called = "",
@@ -92,24 +103,24 @@ Lab.experiment("Make sure that all we implement all we know of passport", functi
                 expect(message).to.equal("Error while trying to login...");
                 expect(error).to.equal(originalError);
                 called += "a";
-                return replyMethod;
+                return {
+                    redirect: function (uri) {
+                        expect(uri).to.equal(redirect);
+                        called += "b";
+                    }
+                };
             };
-
-        replyMethod.redirect = function (uri) {
-            expect(uri).to.equal(redirect);
-            called += "b";
-        };
 
         hp({
             authenticate: function () {
                 this.error(originalError);
             }
-        })({ errorRedirect: redirect })(null, replyMethod);
+        })({ errorRedirect: redirect })(requestStub, replyMethod);
         expect(called).to.equal("ab");
         done();
     });
 
-    test("it should use a fail redirect if given", function (done) {
+    test("should use a fail redirect if given", function (done) {
         var redirect = "http://test",
             originalError = {message: "foo"},
             called = "",
@@ -129,12 +140,12 @@ Lab.experiment("Make sure that all we implement all we know of passport", functi
             authenticate: function () {
                 this.fail(originalError);
             }
-        })({ failRedirect: redirect })(null, replyMethod);
+        })({ failRedirect: redirect })(requestStub, replyMethod);
         expect(called).to.equal("ab");
         done();
     });
 
-    test("it should use a success redirect if given", function (done) {
+    test("should use a success redirect if given", function (done) {
         var redirect = "http://test",
             originalError = {message: "foo"},
             called = "",
@@ -154,12 +165,12 @@ Lab.experiment("Make sure that all we implement all we know of passport", functi
             authenticate: function () {
                 this.success(originalError);
             }
-        })({ successRedirect: redirect })(null, replyMethod);
+        })({ successRedirect: redirect })(requestStub, replyMethod);
         expect(called).to.equal("ab");
         done();
     });
 
-    test("it should just reply with a error when a error occurs", function (done) {
+    test("should just reply with a error when a error occurs", function (done) {
         var originalError = {message: "foo"},
             called = "",
             replyMethod = function (error) {
@@ -172,12 +183,12 @@ Lab.experiment("Make sure that all we implement all we know of passport", functi
             authenticate: function () {
                 this.error(originalError);
             }
-        })()(null, replyMethod);
+        })()(requestStub, replyMethod);
         expect(called).to.equal("a");
         done();
     });
 
-    test("it should just reply with the fail message when a failure occurs", function (done) {
+    test("should just reply with the fail message when a failure occurs", function (done) {
         var originalError = {message: "foo"},
             called = "",
             replyMethod = function (error) {
@@ -190,12 +201,12 @@ Lab.experiment("Make sure that all we implement all we know of passport", functi
             authenticate: function () {
                 this.fail(originalError);
             }
-        })()(null, replyMethod);
+        })()(requestStub, replyMethod);
         expect(called).to.equal("a");
         done();
     });
 
-    test("it should just reply with the info message when the request was successful", function (done) {
+    test("should just reply with the info message when the request was successful", function (done) {
         var originalInfo = {message: "foo"},
             called = "",
             replyMethod = function (error) {
@@ -208,7 +219,7 @@ Lab.experiment("Make sure that all we implement all we know of passport", functi
             authenticate: function () {
                 this.success(originalInfo);
             }
-        })()(null, replyMethod);
+        })()(requestStub, replyMethod);
         expect(called).to.equal("a");
         done();
     });
