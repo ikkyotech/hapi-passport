@@ -114,6 +114,7 @@ Lab.experiment("Making sure that the passport-facebook works as expected", funct
             refreshToken = "refreshToken1",
             infoInput = "some Input",
             profile = { id: "id" },
+            oauth2 = '_oauth2',
             oauthMock = nodemock.mock("getOAuthAccessToken").takesF(function (inCode, params, callback) {
                 expect(inCode).to.equal(code);
                 expect(params).to.eql({
@@ -126,7 +127,6 @@ Lab.experiment("Making sure that the passport-facebook works as expected", funct
             }).mock("get")
                 .takes("https://graph.facebook.com/me", accessToken, function () { return undefined; })
                 .calls(2, [null, JSON.stringify(profile)]),
-            oauth2 = '_oauth2',
             facebookImpl = new Facebook({
                 clientID: "myClientId",
                 clientSecret: "myClientSecret"
