@@ -16,7 +16,7 @@ With this you can make a request handler like this:
 
 ```javascript
 var FacebookStrategy = require("passport-facebook"),
-    facebookLogin = require("hapi-auth-passport")(new FacebookStrategy(...));
+    facebookLogin = require("hapi-passport")(new FacebookStrategy(...));
 ```
 
 and connect it hapi using
@@ -61,7 +61,7 @@ Resulting into something like:
 
 ```javascript
 var FacebookStrategy = require("passport-facebook"),
-    facebookLogin = require("hapi-auth-passport")(new FacebookStrategy({
+    facebookLogin = require("hapi-passport")(new FacebookStrategy({
         clientID: "FACEBOOK_APP_ID", // Facebook app id
         clientSecret: "FACEBOOK_APP_SECRET", // Facebook secret
         callbackURL: "http://localhost:3000/login/facebook" // needs to be added in the facebook admin interface
