@@ -6,7 +6,7 @@ hapi-passport
 usage
 =====
 
-You need to install ```hapi-passort``` together with the connector strategies like ```passport-facebook```. 
+You need to install ```hapi-passport``` together with the connector strategies like ```passport-facebook```. 
 
 ```bash
 $ npm install hapi-passport passport-facebook
@@ -28,10 +28,14 @@ server.routes({method: "GET", path: "/login/facebook", facebookLogin() });
 By default it would just show loose error or success messages. You can work around that by passing redirect urls for the different cases:
 
 ```javascript
-server.routes({method: "GET", path: "/login/facebook", facebookLogin({
-    successRedirect: "http://mydomain/login/success",
-    errorRedirect: "http://mydomain/login/error",
-    failRedirect: "http://mydomain/login/failed"
+server.routes({
+    method: "GET",
+    path: "/login/facebook",
+    handler: facebookLogin({
+        successRedirect: "http://mydomain/login/success",
+        errorRedirect: "http://mydomain/login/error",
+        failRedirect: "http://mydomain/login/failed"
+    })
 });
 ```
 
